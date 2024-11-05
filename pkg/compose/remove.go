@@ -81,10 +81,14 @@ func (s *composeService) Remove(ctx context.Context, projectName string, options
 		_, _ = fmt.Fprintln(s.stdinfo(), "No stopped containers")
 		return nil
 	}
+
 	msg := fmt.Sprintf("Going to remove %s", strings.Join(names, ", "))
-	if options.Force {
+	switch {
+	case options.Quiet:
+		// no-op
+	case options.Force:
 		_, _ = fmt.Fprintln(s.stdout(), msg)
-	} else {
+	default:
 		confirm, err := prompt.NewPrompt(s.stdin(), s.stdout()).Confirm(msg, false)
 		if err != nil {
 			return err
@@ -93,6 +97,7 @@ func (s *composeService) Remove(ctx context.Context, projectName string, options
 			return nil
 		}
 	}
+
 	return progress.RunWithTitle(ctx, func(ctx context.Context) error {
 		return s.remove(ctx, stoppedContainers, options)
 	}, s.stdinfo(), "Removing")

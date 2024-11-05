@@ -332,6 +332,7 @@ type RemoveOptions struct {
 	Volumes bool
 	// Force don't ask to confirm removal
 	Force bool
+	Quiet bool
 	// Services passed in the command line to be removed
 	Services []string
 }
